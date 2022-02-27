@@ -1,0 +1,26 @@
+.menuList {
+  padding: 9px 0 10px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  text-align: center;
+  cursor: pointer;
+
+  img {
+    width: 20px;
+    height: 18.6px;
+  }
+
+  .title {
+    margin-top: 4.6px;
+    font-size: 12px;
+    color: #e9e9e9;
+  }
+
+  &.active {
+    background: #171f24;
+    .title {
+      color: #3db392;
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "baseUrl": ".",
+    "jsx": "react",
+    "paths": {
+      "@/*": ["src/*"],
+      "@@/*": ["src/.umi/*"],
+      "@api": ["src/services/"],
+      "@components": ["src/components"],
+      "@components/*": ["src/components/*"],
+      "@config": ["src/utils/config"],
+      "@models": ["src/models"],
+      "@routes": ["src/routes"],
+      "@services": ["src/services"],
+      "@themes": ["src/themes"],
+      "@utils": ["src/utils"],
+      "@utils/*": ["src/utils/*"]
+    }
+  }
+}
