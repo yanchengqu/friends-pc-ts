@@ -8,7 +8,7 @@ export default defineConfig({
   },
   mfsu: {},
   theme: {
-    'primary-color': '#fff',
+    'primary-color': '#26A872',
   },
   // layout: {
   // },
