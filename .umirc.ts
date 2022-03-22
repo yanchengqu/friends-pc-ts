@@ -8,7 +8,10 @@ export default defineConfig({
   },
   mfsu: {},
   theme: {
-    'primary-color': '#26A872',
+    'primary-color': '#26A872', // 全局主色
+    'heading-color': '#666666', // 标题色
+    // 'text-color': '', // 主文本色
+    // 'text-color-secondary': '', // 次文本色
   },
   // layout: {
   // },
