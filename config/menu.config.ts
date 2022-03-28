@@ -11,9 +11,16 @@ export default [
     children: [],
   },
   {
-    title: '设备管理',
+    title: '运营管理',
     link: '/device',
     key: 'device',
+    icon: normalImg,
+    activeIcon: activeImg,
+  },
+  {
+    title: '人员',
+    link: '/person',
+    key: 'person',
     icon: normalImg,
     activeIcon: activeImg,
   },
