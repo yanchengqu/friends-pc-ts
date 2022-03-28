@@ -28,6 +28,8 @@ export default function IndexPage() {
   };
   const [form] = Form.useForm();
 
+  // 扫描点击
+  const scanHandle = () => {};
   return (
     <div>
       <WrapComponent>
@@ -48,7 +50,25 @@ export default function IndexPage() {
           onFieldsChange={onFieldsChange}
         >
           <Form.Item label="设备ID：" name="id" rules={[{ required: true }]}>
-            <Input placeholder="这是提示性文字" />
+            <Input.Group compact>
+              <Input
+                style={{ width: 'calc(100% - 50px)' }}
+                placeholder="这是提示性文字"
+              />
+              <CustomButton
+                onClick={scanHandle}
+                btnName="扫描"
+                bgColor="grey"
+                wrapStyle={{
+                  fontSize: '13px',
+                  width: '48px',
+                  height: '32px',
+                  borderRadius: '0px 4px 4px 0px',
+                  textAlign: 'center',
+                  lineHeight: '32px',
+                }}
+              />
+            </Input.Group>
           </Form.Item>
 
           <Form.Item

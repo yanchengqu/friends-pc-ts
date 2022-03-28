@@ -18,7 +18,7 @@ export interface ICustomButton {
   onClick?: MouseEventHandler<HTMLElement>;
   /**
    * @description 控制大小, 默认 middle
-   * samll-高度32px 重新上传模板，上传excel模板，关闭按钮
+   * small-高度32px 重新上传模板，上传excel模板，关闭按钮
    * middle-40px 提交, 紧急制动,充电模式, 登陆查询按钮
    * large-60px
    * */
@@ -26,7 +26,7 @@ export interface ICustomButton {
   /** 背景颜色 green-绿色 | gray-灰色  默认绿色 */
   bgColor?: 'green' | 'grey';
   /** 字体大小 默认16*/
-  fontSize?: 'samll' | 'middle' | 'large';
+  fontSize?: 'small' | 'middle' | 'large';
   /** 自定义图标内容 */
   customIcon?: ReactNode;
 }
@@ -52,7 +52,7 @@ export const CustomButton = (props: ICustomButton) => {
 
   // 按钮高度
   const heightObj = {
-    samll: '32px',
+    small: '32px',
     middle: '40px',
     large: '60px',
   };
@@ -70,7 +70,7 @@ export const CustomButton = (props: ICustomButton) => {
 
   // 按钮字体
   const fontSizeObj = {
-    samll: '14px',
+    small: '14px',
     middle: '16px',
     large: '18px',
   };
@@ -85,6 +85,7 @@ export const CustomButton = (props: ICustomButton) => {
         background: bgColorObj[bgColor],
         color: fontColorObj[bgColor],
         fontSize: fontSizeObj[fontSize],
+        border: bgColor == 'grey' ? '1px solid rgba(224,224,224,1)' : 'none',
         ...wrapStyle,
       }}
       onClick={(e) => !disabled && onClick && onClick(e)}
