@@ -1,3 +1,33 @@
 .ant-layout-content {
   background: transparent !important;
 }
+.deviceWrap {
+  .headerCard {
+    height: 48px;
+    background: #f8fafa;
+    font-weight: 400;
+  }
+  .headerMark {
+    position: absolute;
+    left: 12px;
+    top: 14px;
+    width: 20px;
+    height: 20px;
+  }
+  :global {
+    .ant-card-head {
+      height: 48px;
+      color: #212121;
+      padding-left: 37px;
+      font-weight: 400;
+      background: #f8fafa;
+      display: flex;
+    }
+    .ant-card {
+      position: relative;
+    }
+    .ant-card-head-title {
+      padding: 0 !important;
+    }
+  }
+}

@@ -1,6 +1,6 @@
 import { Form, Input, Button, Upload } from 'antd';
 import styles from './index.less';
-import { WrapComponent, TitleStyle, CustomButton } from '../../components';
+import { WrapComponent, TitleStyle, CustomButton } from '@/components';
 import { UploadOutlined } from '@ant-design/icons';
 const props = {
   name: 'file',
