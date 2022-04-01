@@ -9,10 +9,10 @@ const { Header, Content, Sider } = Layout;
 
 export default (props: any) => {
   const pathname = props.children?.props?.location?.pathname;
-  const contentStyle =
-    pathname.indexOf('device') > -1
-      ? [styles.content, styles.deviceContent]
-      : [styles.content];
+  const showTabs = pathname.indexOf('device') > -1;
+  const contentStyle = showTabs
+    ? [styles.content, styles.deviceContent]
+    : [styles.content];
   return (
     <Layout className={styles.container}>
       {/* 左边菜单 */}
@@ -29,7 +29,7 @@ export default (props: any) => {
         {/* 右边内容 */}
         <Layout>
           <Header className={styles.contentHeader}>
-            <HeaderContent />
+            <HeaderContent showTabs={showTabs} />
           </Header>
           <Content className={classNames(contentStyle)}>
             {props.children}

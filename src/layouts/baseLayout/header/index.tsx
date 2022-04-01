@@ -1,7 +1,11 @@
 import React, { useState } from 'react';
 import styles from './index.less';
 import { TabList } from '@/components';
-export default function () {
+interface IProps {
+  /** 控制tabs显示 */
+  showTabs?: boolean;
+}
+export default function (props: IProps) {
   const list = [
     {
       id: 0,
@@ -31,7 +35,9 @@ export default function () {
       <div className={styles.headerFont}>
         <span>中国航天集团</span>
         <span className={styles.smallFont}>11月23日 周三</span>
-        <TabList list={list} onClick={onClick} activeItem={activeItem} />
+        {props?.showTabs ? (
+          <TabList list={list} onClick={onClick} activeItem={activeItem} />
+        ) : null}
       </div>
     </>
   );

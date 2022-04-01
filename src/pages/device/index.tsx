@@ -1,5 +1,14 @@
 import styles from './index.less';
-import { Card, Col, Row, Alert, Button, Statistic } from 'antd';
+import {
+  Card,
+  Col,
+  Row,
+  Alert,
+  Button,
+  Statistic,
+  Progress,
+  Table,
+} from 'antd';
 import { MoreArrow } from '@/components';
 
 export default function IndexPage() {
@@ -7,6 +16,60 @@ export default function IndexPage() {
     width: '50%',
     textAlign: 'center',
   };
+  const dataSource = [
+    {
+      key: '1',
+      name: '无人机',
+      need: 20,
+      age: 6,
+      address: 15,
+      baofei: 14,
+    },
+    {
+      key: '2',
+      name: '电池',
+      need: 20,
+      age: 6,
+      address: 15,
+      baofei: 14,
+    },
+    {
+      key: '3',
+      name: '部件',
+      need: 20,
+      age: 6,
+      address: 15,
+      baofei: 14,
+    },
+  ];
+
+  const columns = [
+    {
+      title: ' ',
+      dataIndex: 'name',
+      key: 'name',
+    },
+    {
+      title: '需求',
+      dataIndex: 'need',
+      key: 'need',
+    },
+    {
+      title: '在库',
+      dataIndex: 'age',
+      key: 'age',
+    },
+    {
+      title: '差额',
+      dataIndex: 'address',
+      key: 'address',
+    },
+    {
+      title: '差额',
+      dataIndex: 'baofei',
+      key: 'baofei',
+    },
+  ];
   return (
     <div className={styles.deviceWrap}>
       {/* 公告 */}
@@ -23,11 +86,61 @@ export default function IndexPage() {
       <Row gutter={[12, 12]}>
         <Col span={8}>
           <Card title="库存状态" bordered={false}>
-            Card content
+            <Row>
+              <Col>
+                <Progress
+                  strokeLinecap="square"
+                  type="circle"
+                  strokeWidth="12"
+                  percent={48}
+                  strokeColor="#3DB291"
+                  trailColor="#DBDBDB"
+                />
+              </Col>
+              <Col>
+                <Statistic
+                  title="设备存放量"
+                  // prefix={<LikeOutlined />}
+                  value={42}
+                  valueStyle={{
+                    fontSize: 18,
+                    color: '#333333',
+                    fontWeight: 400,
+                  }}
+                  precision={1}
+                />
+                <Statistic
+                  title="累计使用"
+                  value={42}
+                  valueStyle={{
+                    fontSize: 18,
+                    color: '#333333',
+                    fontWeight: 400,
+                  }}
+                  precision={1}
+                />
+                <Statistic
+                  title="维修中"
+                  value={42}
+                  valueStyle={{
+                    fontSize: 18,
+                    color: '#333333',
+                    fontWeight: 400,
+                  }}
+                  precision={1}
+                />
+              </Col>
+            </Row>
           </Card>
         </Col>
         <Col span={8}>
-          <Card title="库存信息" bordered={false}></Card>
+          <Card title="库存信息" bordered={false}>
+            <Table
+              dataSource={dataSource}
+              columns={columns}
+              pagination={false}
+            />
+          </Card>
         </Col>
         <Col span={8}>
           <Card title="预警状态" bordered={false}>
