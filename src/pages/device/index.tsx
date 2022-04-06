@@ -1,3 +1,4 @@
+import React from 'react';
 import styles from './index.less';
 import {
   Card,
@@ -48,6 +49,9 @@ export default function IndexPage() {
       title: ' ',
       dataIndex: 'name',
       key: 'name',
+      render: (text, row, index) => (
+        <span style={{ color: '#3DB291', fontWeight: 500 }}>{text}</span>
+      ),
     },
     {
       title: '需求',
@@ -87,7 +91,7 @@ export default function IndexPage() {
         <Col span={8}>
           <Card title="库存状态" bordered={false}>
             <Row>
-              <Col>
+              <Col span={16} align="center">
                 <Progress
                   strokeLinecap="square"
                   type="circle"
@@ -97,7 +101,7 @@ export default function IndexPage() {
                   trailColor="#DBDBDB"
                 />
               </Col>
-              <Col>
+              <Col span={8}>
                 <Statistic
                   title="设备存放量"
                   // prefix={<LikeOutlined />}
@@ -142,7 +146,7 @@ export default function IndexPage() {
             />
           </Card>
         </Col>
-        <Col span={8}>
+        {/* <Col span={8}>
           <Card title="预警状态" bordered={false}>
             Card content
           </Card>
@@ -171,7 +175,7 @@ export default function IndexPage() {
           <Card title="工单办理情况" bordered={false}>
             Card content
           </Card>
-        </Col>
+        </Col> */}
       </Row>
     </div>
   );

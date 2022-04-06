@@ -1,12 +1,14 @@
 .ant-layout-content {
   background: transparent !important;
 }
+
 .deviceWrap {
   .headerCard {
     height: 48px;
     background: #f8fafa;
     font-weight: 400;
   }
+
   .headerMark {
     position: absolute;
     left: 12px;
@@ -14,6 +16,7 @@
     width: 20px;
     height: 20px;
   }
+
   :global {
     .ant-card-head {
       height: 48px;
@@ -23,11 +26,49 @@
       background: #f8fafa;
       display: flex;
     }
+
     .ant-card {
       position: relative;
     }
+
     .ant-card-head-title {
       padding: 0 !important;
+    }
+  }
+
+  :global {
+    .ant-card-body {
+      padding: 15px 24px 19px !important;
+    }
+    .ant-table-thead > tr > th {
+      background: #ffffff !important;
+      color: #666666;
+      font-weight: 400;
+      padding: 7px 7px !important;
+      border: 0 none !important;
+    }
+
+    //修改列表文字、背景颜色
+    .ant-table-tbody > tr > td {
+      font-size: 14px;
+      color: #333333;
+      font-weight: 600;
+      background: rgba(240, 240, 240, 0.36) !important;
+      padding: 7px 7px !important;
+      border-bottom: 8px solid #ffffff;
+    }
+    .ant-table-tbody > tr:last-child > td {
+      border: 0 none !important;
+    }
+    .ant-table-tbody > tr {
+      border-radius: 4px !important;
+    }
+
+    .ant-table-thead
+      > tr
+      > th:not(:last-child):not(.ant-table-selection-column):not(.ant-table-row-expand-icon-cell):not([colspan])::before {
+      width: 0 !important;
+      height: 0 !important;
     }
   }
 }
