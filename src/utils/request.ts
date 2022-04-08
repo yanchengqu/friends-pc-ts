@@ -45,6 +45,16 @@ type mapCode =
 const errorHandler = (error: { response: Response }): Response => {
   const { response } = error;
   if (response && response.status) {
+    // if (response.status === '40100') { //在这里对token过期或者没有登录时的情况跳转到登录页面
+    //   history.replace({
+    //     pathname: '/login',
+    //     search: stringify({
+    //       redirect: window.location.hash.substring(1),//记录是从哪个页面跳转到登录页的，登录后直接跳转到对应的页面
+    //     }),
+    //   });
+    //   localStorage.clear();  //跳到登录页时需要将存储在本地的信息全部清除掉
+    // }
+
     const errorText =
       codeMessage[response.status as mapCode] || response.statusText;
     const { status, url } = response;
@@ -65,6 +75,20 @@ const errorHandler = (error: { response: Response }): Response => {
  * 配置request请求时的默认参数
  */
 const request = extend({
+  prefix: '/api/v1', // baseUrl前缀，统一设置 url 前缀
+  // suffix: ".json", // 后缀，统一设置 url 后缀
+  timeout: 20000,
+  // 'useCache' 是否使用缓存，当值为 true 时，GET 请求在 ttl 毫秒内将被缓存，缓存策略唯一 key 为 url + params 组合
+  // useCache: false, // default
+  headers: {
+    // 请求头
+    'Content-Type': 'multipart/form-data',
+    // Authorization: getToken() ? `Bearer ${getToken()}` : null, // 携带token
+  },
+  params: {
+    // 即将于请求一起发送的 URL 参数，参数会自动 encode 后添加到 URL 中
+    token: 'xxx', // 所有请求默认带上 token 参数
+  },
   errorHandler, // 默认错误处理
   credentials: 'include', // 默认请求是否带上cookie
 });

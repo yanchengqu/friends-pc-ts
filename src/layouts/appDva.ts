@@ -1,4 +1,4 @@
-import { create } from '@csx/dva-core';
+import { create } from 'dva-core';
 import createLoading from 'dva-loading';
 // import { createBrowserHistory } from 'history';
 import history from '@history';

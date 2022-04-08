@@ -7,16 +7,16 @@
     "paths": {
       "@/*": ["src/*"],
       "@@/*": ["src/.umi/*"],
-      "@api": ["src/services/"],
+      "@services": ["src/services"],
       "@components": ["src/components"],
       "@components/*": ["src/components/*"],
       "@config": ["src/utils/config"],
       "@models": ["src/models"],
       "@routes": ["src/routes"],
-      "@services": ["src/services"],
       "@themes": ["src/themes"],
       "@utils": ["src/utils"],
-      "@utils/*": ["src/utils/*"]
+      "@utils/*": ["src/utils/*"],
+      "@history": ["src/router/history.ts"]
     }
   }
 }
