@@ -14,6 +14,7 @@ import {
   InputNumber,
   Popconfirm,
   Form,
+  Space,
   Typography,
 } from 'antd';
 import { PlusCircleOutlined } from '@ant-design/icons';
@@ -21,7 +22,7 @@ import { CustomButton } from '../../components';
 const { TabPane } = Tabs;
 const originData = [];
 
-for (let i = 0; i < 100; i++) {
+for (let i = 0; i < 20; i++) {
   originData.push({
     key: i.toString(),
     name: `Edrward ${i}`,
@@ -71,6 +72,11 @@ const EditableTable = () => {
   const [editingKey, setEditingKey] = useState('');
 
   const isEditing = (record) => record.key === editingKey;
+
+  const handleDelete = (key) => {
+    const dataSource = [...data];
+    setData(dataSource.filter((item) => item.key !== key));
+  };
 
   const edit = (record) => {
     form.setFieldsValue({
@@ -143,17 +149,25 @@ const EditableTable = () => {
             >
               保存
             </Typography.Link>
-            <Popconfirm title="Sure to cancel?" onConfirm={cancel}>
+            <Popconfirm title="确定取消?" onConfirm={cancel}>
               <a>取消</a>
             </Popconfirm>
           </span>
         ) : (
-          <Typography.Link
-            disabled={editingKey !== ''}
-            onClick={() => edit(record)}
-          >
-            编辑
-          </Typography.Link>
+          <Space size="middle">
+            <Typography.Link
+              disabled={editingKey !== ''}
+              onClick={() => edit(record)}
+            >
+              编辑
+            </Typography.Link>
+            <Popconfirm
+              title="确定删除?"
+              onConfirm={() => handleDelete(record.key)}
+            >
+              <a style={{ color: '#666' }}>删除</a>
+            </Popconfirm>
+          </Space>
         );
       },
     },
@@ -177,6 +191,7 @@ const EditableTable = () => {
   return (
     <Form form={form} component={false}>
       <Table
+        size="middle"
         components={{
           body: {
             cell: EditableCell,
