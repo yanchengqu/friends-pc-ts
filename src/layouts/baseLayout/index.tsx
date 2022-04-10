@@ -9,7 +9,8 @@ const { Header, Content, Sider } = Layout;
 
 export default (props: any) => {
   const pathname = props.children?.props?.location?.pathname;
-  const showTabs = pathname.indexOf('device') > -1;
+  const showTabs =
+    pathname.indexOf('device') > -1 || pathname.indexOf('material') > -1;
   const contentStyle = showTabs
     ? [styles.content, styles.deviceContent]
     : [styles.content];

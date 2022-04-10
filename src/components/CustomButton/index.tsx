@@ -90,7 +90,7 @@ export const CustomButton = (props: ICustomButton) => {
       }}
       onClick={(e) => !disabled && onClick && onClick(e)}
     >
-      {btnName}
+      {customIcon} {btnName}
     </div>
   );
 };

@@ -1,7 +1,22 @@
+import React from 'react';
+import { connect } from 'umi';
 import styles from './index.less';
 import { WrapComponent, TitleStyle, CustomButton } from '../../components';
 import { DeviceWrap } from './components/index';
-export default function IndexPage() {
+import { HomeState } from '../../models/Home';
+import { ILoading } from '@/services/common';
+import { IDvaProps } from '@/constants';
+
+interface IProps {
+  loading: ILoading;
+  Home: HomeState;
+}
+
+const mapStateToProps = ({ Home, loading }: IDvaProps & IProps) => {
+  return { Home, loading };
+};
+const IndexPage = ({ dispatch, Home, loading }) => {
+  console.log('--Home', Home);
   return (
     <div>
       <WrapComponent>
@@ -57,4 +72,6 @@ export default function IndexPage() {
       </WrapComponent>
     </div>
   );
-}
+};
+
+export default React.memo(connect(mapStateToProps)(IndexPage));

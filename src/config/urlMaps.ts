@@ -1,5 +1,5 @@
 class UrlMaps {
-  orderListApi = 'raTable/single'; // BBC订单
+  deviceAddApi = 'device/add'; // 新增设备
 }
 
 export default new UrlMaps();

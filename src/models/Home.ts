@@ -1,34 +1,55 @@
+import { Effect, Reducer, history } from 'umi';
+import { message } from 'antd';
 import urlMaps from '../config/urlMaps';
-import {
-  PageData,
-  postListEffect,
-  getListEffect,
-  getPageEffect,
-  BaseModel,
-  getCommonReducer,
-} from '@services';
+import { queryDeviceAdd } from '@/services/Home';
 
-export interface IOrderData {
-  list: any[];
-  title: any[];
-  total: number;
+export interface HomeState {
+  deviceList: any[];
 }
 
-export class OrderState {
-  orderList: IOrderData[] = [];
-}
-
-type HomeNameSpace = 'BbcOrder';
-export class HomeModel extends BaseModel<OrderState> {
-  namespace: HomeNameSpace = 'BbcOrder';
-  state: OrderState = new OrderState();
-  effects = {
-    orderList: getPageEffect<IOrderData, any>(
-      urlMaps.orderListApi,
-      'orderList',
-    ),
+export interface HomeType {
+  namespace: 'Home';
+  state: HomeState;
+  effects: {
+    deviceList: Effect;
   };
-  reducers = getCommonReducer<OrderState>();
+  reducers: {
+    save: Reducer<HomeState>;
+    // 启用 immer 之后
+    // save: ImmerReducer<QueryTableState>;
+  };
 }
 
-export default new HomeModel();
+const HomeModel: HomeType = {
+  namespace: 'Home',
+  state: {
+    deviceList: [],
+  },
+  effects: {
+    *deviceList({ payload }, { call, put, select }) {
+      const response = yield call(queryDeviceAdd, { ...payload });
+      if (response.status === 'ok') {
+        yield put({
+          type: 'save',
+          payload: {
+            deviceList: response.data,
+          },
+        });
+      }
+    },
+  },
+  reducers: {
+    save(state, action) {
+      return {
+        ...state,
+        ...action.payload,
+      };
+    },
+    // 启用 immer 之后
+    // save(state, action) {
+    //   state.name = action.payload;
+    // },
+  },
+};
+
+export default HomeModel;
