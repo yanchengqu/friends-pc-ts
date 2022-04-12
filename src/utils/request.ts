@@ -93,4 +93,40 @@ const request = extend({
   credentials: 'include', // 默认请求是否带上cookie
 });
 
+// request拦截器, 改变url 或 options.
+request.interceptors.request.use((url, options) => {
+  const token = localStorage.getItem('token'); //获取存储在本地的token
+  const { headers = {} } = options || {};
+  const tokenHeaders = {
+    'mxc-token': token,
+    ...headers,
+  };
+
+  if (options.method?.toUpperCase() === 'GET') {
+    options.params = options.data;
+  } else {
+    //我们的请求参数和后端约定的是除了一些特殊情况使用formData 其他都使用json格式，因此默认是使用json格式
+    options.requestType = options.requestType ? options.requestType : 'json';
+  }
+
+  if (token) {
+    return {
+      url,
+      options: { ...options, headers },
+    };
+  }
+  return {
+    url,
+    options: { ...options },
+  };
+});
+
+request.interceptors.response.use(async (response) => {
+  const data = await response.clone().json();
+  if (data.success) {
+    return response; //我们的项目是通过success来判断是否请求成功，具体情况看个人项目
+  }
+  return Promise.reject(data); //注意：需要reject出去才会在请求不成功或返回错误的code时调用errorHandler
+});
+
 export default request;
