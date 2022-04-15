@@ -27,9 +27,13 @@ const originData = [];
 for (let i = 0; i < 20; i++) {
   originData.push({
     key: i.toString(),
-    name: `Edrward ${i}`,
-    age: 32,
-    address: `London Park no. ${i}`,
+    hardwareCode: 'QWER344565',
+    hardwareName: '无人机',
+    type: '无人机',
+    warehouseName: '重机',
+    electricity: '50%',
+    status: '使用中',
+    remarks: '备注内容而已',
   });
 }
 
@@ -74,21 +78,22 @@ const EditableTable = () => {
   const [editingKey, setEditingKey] = useState('');
 
   const isEditing = (record) => record.key === editingKey;
-
-  const handleDelete = (key) => {
+  // 删除一行
+  const handleDelete = (record) => {
+    console.log('--key:', record.key);
     const dataSource = [...data];
-    setData(dataSource.filter((item) => item.key !== key));
+    setData(dataSource.filter((item) => item.key !== record.key));
   };
-
-  const edit = (record) => {
-    form.setFieldsValue({
-      name: '',
-      age: '',
-      address: '',
-      ...record,
-    });
-    setEditingKey(record.key);
-  };
+  // 编辑 暂时不上
+  // const edit = (record) => {
+  //   form.setFieldsValue({
+  //     name: '',
+  //     age: '',
+  //     address: '',
+  //     ...record,
+  //   });
+  //   setEditingKey(record.key);
+  // };
 
   const cancel = () => {
     setEditingKey('');
@@ -118,22 +123,44 @@ const EditableTable = () => {
   const columns = [
     {
       title: '硬件编号',
-      dataIndex: 'name',
-      width: '25%',
+      dataIndex: 'hardwareCode',
+      width: '12%',
       editable: true,
     },
     {
-      title: '状态',
-      dataIndex: 'age',
-      width: '15%',
+      title: '硬件名称',
+      dataIndex: 'hardwareName',
+      width: '10%',
       editable: true,
-      defaultSortOrder: 'descend',
-      sorter: (a, b) => a.age - b.age,
+    },
+    {
+      title: '种类',
+      dataIndex: 'type',
+      width: '10%',
+      editable: true,
+    },
+    {
+      title: '仓库名称',
+      dataIndex: 'warehouseName',
+      width: '8%',
+      editable: true,
+    },
+    {
+      title: '电量',
+      dataIndex: 'electricity',
+      width: '8%',
+      editable: true,
+    },
+    {
+      title: '状况',
+      dataIndex: 'status',
+      width: '8%',
+      editable: true,
     },
     {
       title: '备注',
-      dataIndex: 'address',
-      width: '40%',
+      dataIndex: 'remarks',
+      width: '28%',
       editable: true,
     },
     {
@@ -157,17 +184,18 @@ const EditableTable = () => {
           </span>
         ) : (
           <Space size="middle">
-            <Typography.Link
+            {/* 编辑功能先不上 */}
+            {/* <Typography.Link
               disabled={editingKey !== ''}
               onClick={() => edit(record)}
             >
               编辑
-            </Typography.Link>
+            </Typography.Link> */}
             <Popconfirm
               title="确定删除?"
-              onConfirm={() => handleDelete(record.key)}
+              onConfirm={() => handleDelete(record)}
             >
-              <a style={{ color: '#666' }}>删除</a>
+              <a style={{ color: '#26A872' }}>删除</a>
             </Popconfirm>
           </Space>
         );
@@ -183,7 +211,7 @@ const EditableTable = () => {
       ...col,
       onCell: (record) => ({
         record,
-        inputType: col.dataIndex === 'age' ? 'number' : 'text',
+        // inputType: col.dataIndex === 'age' ? 'number' : 'text',
         dataIndex: col.dataIndex,
         title: col.title,
         editing: isEditing(record),
@@ -193,6 +221,7 @@ const EditableTable = () => {
   return (
     <Form form={form} component={false}>
       <Table
+        loading={true}
         size="middle"
         components={{
           body: {
