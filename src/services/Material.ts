@@ -39,6 +39,18 @@ export interface deviceAddParams extends IDeviceBase {
   /** 设备属性列表 */
   attributes?: IAttributes[];
 }
+
+export interface storeAddParams
+  extends Omit<IDeviceBase, 'deviceCode', 'deviceName'> {
+  /** 库存商品名称 */
+  storeName: string;
+  /** 库存商品rfid */
+  rfid: string;
+  /** 设备描述 */
+  description?: string;
+  /** 设备属性列表 */
+  attributes?: IAttributes[];
+}
 export interface deviceDeleteParams {
   deviceCode: string;
 }
@@ -136,6 +148,14 @@ export async function queryStoreByPage(params: deviceByPageParams) {
 // 新增设备确认提交
 export async function queryDeviceAdd(params: deviceAddParams) {
   return request('device/add', {
+    method: 'POST',
+    data: params,
+  });
+}
+
+// 新增物资确认提交
+export async function queryStoreAdd(params: storeAddParams) {
+  return request('store/add', {
     method: 'POST',
     data: params,
   });

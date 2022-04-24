@@ -3,12 +3,17 @@ import { message } from 'antd';
 import urlMaps from '../config/urlMaps';
 import {
   queryDeviceByPage,
+  queryStoreByPage,
   queryDeviceAdd,
+  queryStoreAdd,
   queryDeviceDelete,
+  queryStoreDelete,
   queryWarehouseGet,
   queryDeviceGetTypes,
+  queryStoreGetTypes,
   queryDeviceGetManufacturers,
   queryGetAttributes,
+  queryStoreAttributes,
 } from '@/services/Material';
 
 interface Ilist {
@@ -17,10 +22,13 @@ interface Ilist {
 }
 export interface MaterialState {
   deviceByPageList: any[];
+  materialByPageList: any[];
   warehouseTreeList: any[];
   deviceTypes: Ilist[];
+  materialTypes: Ilist[];
   manufacturersList: Ilist[];
   attributesList: Ilist[];
+  attributesMaterialList: Ilist[];
 }
 
 export interface MaterialType {
@@ -29,11 +37,15 @@ export interface MaterialType {
   effects: {
     deviceByPage: Effect;
     queryDeviceAdd: Effect;
+    queryStoreAdd: Effect;
     queryDeviceDelete: Effect;
+    queryStoreDelete: Effect;
     queryWarehouseGet: Effect;
     queryDeviceGetTypes: Effect;
+    queryStoreGetTypes: Effect;
     queryDeviceGetManufacturers: Effect;
     queryGetAttributes: Effect;
+    queryStoreAttributes: Effect;
   };
   reducers: {
     save: Reducer<MaterialState>;
@@ -46,10 +58,13 @@ const MaterialModel: MaterialType = {
   namespace: 'Material',
   state: {
     deviceByPageList: {},
+    materialByPageList: {},
     warehouseTreeList: [],
     deviceTypes: [],
+    materialTypes: [],
     manufacturersList: [],
     attributesList: [],
+    attributesMaterialList: [],
   },
   effects: {
     // 设备查询table
@@ -65,6 +80,19 @@ const MaterialModel: MaterialType = {
         });
       }
     },
+    // 物资查询table
+    *queryStoreByPage({ payload }, { call, put, select }) {
+      const response = yield call(queryStoreByPage, { ...payload });
+      console.log('---queryStoreByPage', response);
+      if (response?.success) {
+        yield put({
+          type: 'save',
+          payload: {
+            materialByPageList: response?.data,
+          },
+        });
+      }
+    },
     // 新增设备
     *queryDeviceAdd({ payload, callBack }, { call, put, select }) {
       const response = yield call(queryDeviceAdd, { ...payload });
@@ -73,9 +101,25 @@ const MaterialModel: MaterialType = {
         callBack && callBack(response?.data);
       }
     },
+    // 新增物资
+    *queryStoreAdd({ payload, callBack }, { call, put, select }) {
+      const response = yield call(queryStoreAdd, { ...payload });
+      console.log('---新增成功', response);
+      if (response?.success) {
+        callBack && callBack(response?.data);
+      }
+    },
     // 删除设备
     *queryDeviceDelete({ payload, callBack }, { call, put, select }) {
       const response = yield call(queryDeviceDelete, { ...payload });
+      console.log('--删除成功', response);
+      if (response?.success) {
+        callBack && callBack(response?.data);
+      }
+    },
+    // 删除物资
+    *queryStoreDelete({ payload, callBack }, { call, put, select }) {
+      const response = yield call(queryStoreDelete, { ...payload });
       console.log('--删除成功', response);
       if (response?.success) {
         callBack && callBack(response?.data);
@@ -107,6 +151,19 @@ const MaterialModel: MaterialType = {
         });
       }
     },
+    // 查询物资类型
+    *queryStoreGetTypes({ payload }, { call, put, select }) {
+      const response = yield call(queryStoreGetTypes, { ...payload });
+      console.log('--查询物资类型', response);
+      if (response?.success) {
+        yield put({
+          type: 'save',
+          payload: {
+            materialTypes: response?.data,
+          },
+        });
+      }
+    },
     // 设备厂商
     *queryDeviceGetManufacturers({ payload }, { call, put, select }) {
       console.log('--设备厂商payload', payload);
@@ -130,6 +187,19 @@ const MaterialModel: MaterialType = {
           type: 'save',
           payload: {
             attributesList: response.data,
+          },
+        });
+      }
+    },
+    // 物资厂商onchange
+    *queryStoreAttributes({ payload }, { call, put, select }) {
+      const response = yield call(queryStoreAttributes, { ...payload });
+      console.log('--物资厂商onchange', response);
+      if (response?.success) {
+        yield put({
+          type: 'save',
+          payload: {
+            attributesMaterialList: response.data,
           },
         });
       }
