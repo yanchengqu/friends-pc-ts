@@ -50,7 +50,7 @@ const MenuContent: FC<BasicLayoutProps> = ({ global }) => {
     //   {renderMenu(menusData)}
     // </Menu>
     <>
-      {menusData.map((item) => {
+      {menusData.map((item, i) => {
         if (item === undefined) return false;
         const { title, link = '', key, children, ...restState } = item;
         // 判断是否当前选中
@@ -66,7 +66,7 @@ const MenuContent: FC<BasicLayoutProps> = ({ global }) => {
         return (
           <Link to={{ pathname: link, state: { ...restState, key } }}>
             <div
-              key={item.key}
+              key={item.key + '-' + i}
               className={classNames(
                 rootClassName,
                 isActive ? styles.active : '',

@@ -4,7 +4,7 @@
  */
 import { extend } from 'umi-request';
 import { notification } from 'antd';
-
+const baseurl = 'http://182.61.55.225:1601/';
 const codeMessage = {
   200: '服务器成功返回请求的数据。',
   201: '新建或修改数据成功。',
@@ -21,6 +21,24 @@ const codeMessage = {
   502: '网关错误。',
   503: '服务不可用，服务器暂时过载或维护。',
   504: '网关超时。',
+  0: '处理成功',
+  1: '未知异常',
+  2: '用户未登录',
+  3: '用户未授权',
+  4: '用户账号不可用',
+  5: '密码错误',
+  6: '用户不存在',
+  7: '用户已存在',
+  8: '参数为空',
+  9: '参数错误',
+  10: '调用失败',
+  11: '远程调用失败',
+  12: 'id生成失败',
+  13: '数据保存异常',
+  14: '数据查询异常',
+  15: '数据删除异常',
+  16: '数据更新异常',
+  17: '数据不存在',
 };
 type mapCode =
   | 200
@@ -37,15 +55,33 @@ type mapCode =
   | 500
   | 502
   | 503
-  | 504;
+  | 504
+  | 0
+  | 1
+  | 2
+  | 3
+  | 4
+  | 5
+  | 6
+  | 7
+  | 8
+  | 9
+  | 10
+  | 11
+  | 12
+  | 13
+  | 14
+  | 15
+  | 16
+  | 17;
 
 /**
  * 异常处理程序
  */
 const errorHandler = (error: { response: Response }): Response => {
   const { response } = error;
-  if (response && response.status) {
-    // if (response.status === '40100') { //在这里对token过期或者没有登录时的情况跳转到登录页面
+  if (response && response.code) {
+    // if (response.code === '40100') { //在这里对token过期或者没有登录时的情况跳转到登录页面
     //   history.replace({
     //     pathname: '/login',
     //     search: stringify({
@@ -55,11 +91,10 @@ const errorHandler = (error: { response: Response }): Response => {
     //   localStorage.clear();  //跳到登录页时需要将存储在本地的信息全部清除掉
     // }
 
-    const errorText =
-      codeMessage[response.status as mapCode] || response.statusText;
-    const { status, url } = response;
+    const errorText = codeMessage[response.code as mapCode] || response.message;
+    const { code } = response;
     notification.error({
-      message: `请求错误 ${status}: ${url}`,
+      message: `请求错误 ${code}`,
       description: errorText,
     });
   } else if (!response) {
@@ -75,14 +110,15 @@ const errorHandler = (error: { response: Response }): Response => {
  * 配置request请求时的默认参数
  */
 const request = extend({
-  prefix: '/api/v1', // baseUrl前缀，统一设置 url 前缀
+  // prefix: '/api/v1', // baseUrl前缀，统一设置 url 前缀
   // suffix: ".json", // 后缀，统一设置 url 后缀
   timeout: 20000,
   // 'useCache' 是否使用缓存，当值为 true 时，GET 请求在 ttl 毫秒内将被缓存，缓存策略唯一 key 为 url + params 组合
   // useCache: false, // default
   headers: {
     // 请求头
-    'Content-Type': 'multipart/form-data',
+    'Content-Type': 'application/json',
+    'Access-Control-Allow-Origin': '*',
     // Authorization: getToken() ? `Bearer ${getToken()}` : null, // 携带token
   },
   params: {
@@ -90,11 +126,13 @@ const request = extend({
     token: 'xxx', // 所有请求默认带上 token 参数
   },
   errorHandler, // 默认错误处理
-  credentials: 'include', // 默认请求是否带上cookie
+  // credentials: 'include', // 默认请求是否带上cookie
 });
 
 // request拦截器, 改变url 或 options.
 request.interceptors.request.use((url, options) => {
+  console.log('----url', url);
+  url = baseurl + url;
   const token = localStorage.getItem('token'); //获取存储在本地的token
   const { headers = {} } = options || {};
   const tokenHeaders = {
@@ -104,6 +142,7 @@ request.interceptors.request.use((url, options) => {
 
   if (options.method?.toUpperCase() === 'GET') {
     options.params = options.data;
+    console.log('----params', JSON.stringify(options));
   } else {
     //我们的请求参数和后端约定的是除了一些特殊情况使用formData 其他都使用json格式，因此默认是使用json格式
     options.requestType = options.requestType ? options.requestType : 'json';
@@ -121,10 +160,12 @@ request.interceptors.request.use((url, options) => {
   };
 });
 
+// 添加拦截统一处理返回response
 request.interceptors.response.use(async (response) => {
   const data = await response.clone().json();
-  if (data.success) {
-    return response; //我们的项目是通过success来判断是否请求成功，具体情况看个人项目
+  if (data.code == 0) {
+    data.success = true;
+    return data; //我们的项目是通过code来判断是否请求成功，具体情况看个人项目
   }
   return Promise.reject(data); //注意：需要reject出去才会在请求不成功或返回错误的code时调用errorHandler
 });

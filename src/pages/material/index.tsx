@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from './index.less';
 import {
   Card,
@@ -18,24 +18,20 @@ import {
   Modal,
   Typography,
 } from 'antd';
+import { connect } from 'umi';
 import { PlusCircleOutlined } from '@ant-design/icons';
+import { ILoading } from '@/services/common';
+import { deviceByPageParams } from '../../services/Material';
+import { IDvaProps } from '@/constants';
+import { MaterialState } from '../../models/Material';
 import { CustomButton } from '../../components';
 import { AddDevicePoup } from './components';
-const { TabPane } = Tabs;
-const originData = [];
-
-for (let i = 0; i < 20; i++) {
-  originData.push({
-    key: i.toString(),
-    hardwareCode: 'QWER344565',
-    hardwareName: '无人机',
-    type: '无人机',
-    warehouseName: '重机',
-    electricity: '50%',
-    status: '使用中',
-    remarks: '备注内容而已',
-  });
+interface IProps {
+  loading: ILoading;
+  Material: MaterialState;
 }
+
+const { TabPane } = Tabs;
 
 const EditableCell = ({
   editing,
@@ -72,17 +68,34 @@ const EditableCell = ({
   );
 };
 
-const EditableTable = () => {
+const EditableTable = ({ isload, tableData, dispatch }) => {
   const [form] = Form.useForm();
-  const [data, setData] = useState(originData);
+  const [data, setData] = useState(tableData?.records);
   const [editingKey, setEditingKey] = useState('');
 
   const isEditing = (record) => record.key === editingKey;
   // 删除一行
   const handleDelete = (record) => {
-    console.log('--key:', record.key);
-    const dataSource = [...data];
-    setData(dataSource.filter((item) => item.key !== record.key));
+    console.log('--key:', record);
+    dispatch({
+      type: 'Material/queryDeviceDelete',
+      payload: {
+        deviceCode: record?.deviceCode,
+      },
+      callBack: (data) => {
+        console.log('删除成功回调', data);
+        // 删除成功
+        return dispatch({
+          type: 'Material/deviceByPage',
+          payload: {
+            pageSize: 10,
+            pageNum: 1,
+          },
+        });
+      },
+    });
+    // const dataSource = [...data];
+    // setData(dataSource.filter((item) => item.key !== record.key));
   };
   // 编辑 暂时不上
   // const edit = (record) => {
@@ -94,9 +107,18 @@ const EditableTable = () => {
   //   });
   //   setEditingKey(record.key);
   // };
-
-  const cancel = () => {
-    setEditingKey('');
+  // 分页
+  const cancel = (page, pageSize) => {
+    // 重置编辑key
+    // setEditingKey('');
+    console.log('当前点击分页', page, pageSize);
+    dispatch({
+      type: 'Material/deviceByPage',
+      payload: {
+        pageSize: 10,
+        pageNum: page,
+      },
+    });
   };
 
   const save = async (key) => {
@@ -123,45 +145,52 @@ const EditableTable = () => {
   const columns = [
     {
       title: '硬件编号',
-      dataIndex: 'hardwareCode',
+      dataIndex: 'deviceCode',
       width: '12%',
       editable: true,
+      align: 'center',
     },
     {
       title: '硬件名称',
-      dataIndex: 'hardwareName',
+      dataIndex: 'deviceName',
       width: '10%',
       editable: true,
+      align: 'center',
     },
     {
       title: '种类',
-      dataIndex: 'type',
+      dataIndex: 'typeStr',
       width: '10%',
       editable: true,
+      align: 'center',
     },
     {
       title: '仓库名称',
       dataIndex: 'warehouseName',
       width: '8%',
       editable: true,
+      align: 'center',
     },
     {
       title: '电量',
       dataIndex: 'electricity',
       width: '8%',
       editable: true,
+      align: 'center',
     },
     {
       title: '状况',
-      dataIndex: 'status',
+      dataIndex: 'statusStr',
       width: '8%',
       editable: true,
+      align: 'center',
     },
     {
       title: '备注',
-      dataIndex: 'remarks',
+      dataIndex: 'description',
       width: '28%',
       editable: true,
+      align: 'center',
     },
     {
       title: '操作',
@@ -200,6 +229,7 @@ const EditableTable = () => {
           </Space>
         );
       },
+      align: 'center',
     },
   ];
   const mergedColumns = columns.map((col) => {
@@ -221,7 +251,7 @@ const EditableTable = () => {
   return (
     <Form form={form} component={false}>
       <Table
-        loading={true}
+        loading={isload}
         size="middle"
         components={{
           body: {
@@ -234,13 +264,28 @@ const EditableTable = () => {
         rowClassName="editable-row"
         pagination={{
           onChange: cancel,
+          current: tableData?.current || 1,
+          total: tableData?.total,
         }}
       />
     </Form>
   );
 };
 
-export default function IndexPage() {
+const mapStateToProps = ({ Material, loading }: IDvaProps & IProps) => {
+  return { Material, loading };
+};
+const MaterialPage = ({ dispatch, Material, loading }) => {
+  console.log('--Material:', Material, loading);
+  useEffect(() => {
+    dispatch({
+      type: 'Material/deviceByPage',
+      payload: {
+        pageSize: 10,
+        pageNum: 1,
+      },
+    });
+  }, []);
   // 控制弹窗
   const [visible, setVisible] = useState(false);
   const addDevice = () => {
@@ -248,9 +293,46 @@ export default function IndexPage() {
     setVisible(true);
   };
 
+  // 新增设备提交
   const onCreate = (values) => {
-    console.log('Received values of form: ', values);
+    const tempVal = Object.assign({}, values);
+    const filterAttr = [
+      'warehouseCode',
+      'deviceName',
+      'type',
+      'manufacturer',
+      'sn',
+      'description',
+    ];
+
+    filterAttr.forEach((key) => {
+      if (values[key]) delete values[key];
+    });
+    const attributes = Object.keys(values).map((key) => ({
+      key,
+      value: values[key],
+    }));
+    console.log('新增设备提交数据', values, tempVal, attributes);
     setVisible(false);
+    // 新增设备提交接口
+    dispatch({
+      type: 'Material/queryDeviceAdd',
+      payload: {
+        ...tempVal,
+        attributes: attributes,
+      },
+      callBack: (data) => {
+        console.log('新增加设备成功回调', data);
+        // 重新请求table数据
+        return dispatch({
+          type: 'Material/deviceByPage',
+          payload: {
+            pageSize: 10,
+            pageNum: 1,
+          },
+        });
+      },
+    });
   };
 
   return (
@@ -370,7 +452,11 @@ export default function IndexPage() {
                 />
               </div>
               {/* table */}
-              <EditableTable />
+              <EditableTable
+                dispatch={dispatch}
+                isload={loading?.global}
+                tableData={Material?.deviceByPageList}
+              />
             </TabPane>
             <TabPane tab="物资管理" key="2">
               <p>Content of Tab Pane 2</p>
@@ -381,13 +467,19 @@ export default function IndexPage() {
         </div>
       </div>
       {/* 添加设备弹窗 */}
-      <AddDevicePoup
-        visible={visible}
-        onCreate={onCreate}
-        onCancel={() => {
-          setVisible(false);
-        }}
-      />
+      {visible && (
+        <AddDevicePoup
+          visible={visible}
+          onCreate={onCreate}
+          onCancel={() => {
+            setVisible(false);
+          }}
+          Material={Material}
+          dispatch={dispatch}
+        />
+      )}
     </>
   );
-}
+};
+
+export default connect(mapStateToProps)(MaterialPage);
