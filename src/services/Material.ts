@@ -78,7 +78,7 @@ export interface deviceEditParams {
   attributes?: any[];
 }
 
-export interface storeEditParams {
+export interface storeParams {
   /** 库存商品编码 */
   storeCode: string;
   /** 库存商品名称 长度不能超过50 */
@@ -91,10 +91,12 @@ export interface storeEditParams {
   sn?: string;
   /** 库存商品rfid */
   rfid?: string;
-  /** 库存数量 */
-  num: number;
   /** 设备状态	1 - 启用，2 - 停用 */
   status?: number;
+}
+export interface storeEditParams extends storeParams {
+  /** 库存数量 */
+  num: number;
   /** 设备描述	长度不能超过500 */
   description?: string;
   /** 设备属性列表 */
@@ -138,7 +140,7 @@ export async function queryDeviceByPage(params: deviceByPageParams) {
 }
 
 // 查询物质管理
-export async function queryStoreByPage(params: deviceByPageParams) {
+export async function queryStoreByPage(params: storeParams) {
   return request('store/getByPage', {
     method: 'GET',
     data: params,
