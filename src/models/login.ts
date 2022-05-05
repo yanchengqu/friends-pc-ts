@@ -37,19 +37,26 @@ const LoginModel: LoginModelType = {
     *queryLogin({ payload }, { call, put }) {
       // const { name } = yield select((state: ConnectState) => state.global);
       const response = yield call(queryLogin, { ...payload });
-      if (response.status === 'ok') {
-        yield put({
-          type: 'save',
-          payload: {
-            userInfo: response.currentAuthority,
-          },
-        });
-        localStorage.setItem(
-          'userid',
-          JSON.stringify(response.currentAuthority.userid),
-        );
+      if (response?.success) {
+        // data下返回false代表不需要跳转添加设备界面，返回true代表需要跳转添加设备界面
+        // yield put({
+        //   type: 'save',
+        //   payload: {
+        //     userInfo: response.data,
+        //   },
+        // });
+        // localStorage.setItem(
+        //   'userid',
+        //   JSON.stringify(response.currentAuthority.userid),
+        // );
+        if (response?.data) {
+          // true代表需要跳转添加设备界面
+          history.replace('/Material');
+        } else {
+          // false代表不需要跳转添加设备界面
+          history.replace('/');
+        }
         message.success('登录成功！');
-        history.replace('/');
       } else {
         yield put({
           type: 'save',

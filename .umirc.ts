@@ -19,19 +19,19 @@ export default defineConfig({
   //   { path: '/', component: '@/pages/index' },
   // ],
   fastRefresh: {},
-  // proxy: {
-  //   '/': {
-  //     target: 'http://172.20.10.4:1601',
-  //     changeOrigin: true,
-  //     pathRewrite: { '^/': '/' },
-  //     // 添加请求头（access-source只有访问后台本地需要添加，过网关的时候会由网关自动添加）
-  //     // headers: { 'access-source': 'ApiGateway' },
-  //     // onProxyReq(proxyReq, req, res) {
-  //     //   // 添加请求头
-  //     //   proxyReq.setHeader('access-source', 'ApiGateway');
-  //     // }
-  //   },
-  // },
+  proxy: {
+    '/api': {
+      target: 'http://182.61.55.225:1601',
+      changeOrigin: true,
+      pathRewrite: { '^/api': '' },
+      // 添加请求头（access-source只有访问后台本地需要添加，过网关的时候会由网关自动添加）
+      // headers: { 'access-source': 'ApiGateway' },
+      // onProxyReq(proxyReq, req, res) {
+      //   // 添加请求头
+      //   proxyReq.setHeader('access-source', 'ApiGateway');
+      // }
+    },
+  },
   alias: {
     '@/*': resolve(__dirname, './src/*'),
     '@services': resolve(__dirname, './src/services'),

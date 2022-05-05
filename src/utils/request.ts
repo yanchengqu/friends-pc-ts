@@ -3,8 +3,10 @@
  * 更详细的 api 文档: https://github.com/umijs/umi-request
  */
 import { extend } from 'umi-request';
+import { history } from 'umi';
 import { notification } from 'antd';
-const baseurl = 'http://182.61.55.225:1601/';
+// const baseurl = 'http://182.61.55.225:1601/';
+const baseurl = 'api/';
 const codeMessage = {
   200: '服务器成功返回请求的数据。',
   201: '新建或修改数据成功。',
@@ -78,32 +80,36 @@ type mapCode =
 /**
  * 异常处理程序
  */
-const errorHandler = (error: { response: Response }): Response => {
-  const { response } = error;
-  if (response && response.code) {
-    // if (response.code === '40100') { //在这里对token过期或者没有登录时的情况跳转到登录页面
-    //   history.replace({
-    //     pathname: '/login',
-    //     search: stringify({
-    //       redirect: window.location.hash.substring(1),//记录是从哪个页面跳转到登录页的，登录后直接跳转到对应的页面
-    //     }),
-    //   });
-    //   localStorage.clear();  //跳到登录页时需要将存储在本地的信息全部清除掉
-    // }
+const errorHandler = (error) => {
+  console.log('错误', error);
+  if (error?.subCode) {
+    if (
+      error?.subCode === 2 ||
+      error?.subCode === 3 ||
+      error?.subCode === 4 ||
+      error?.subCode === 6
+    ) {
+      //在这里对token过期或者没有登录时的情况跳转到登录页面
+      history.replace({
+        pathname: '/login',
+        // search: stringify({
+        //   redirect: window.location.hash.substring(1),//记录是从哪个页面跳转到登录页的，登录后直接跳转到对应的页面
+        // }),
+      });
+      localStorage.clear(); //跳到登录页时需要将存储在本地的信息全部清除掉
+    }
 
-    const errorText = codeMessage[response.code as mapCode] || response.message;
-    const { code } = response;
     notification.error({
-      message: `请求错误 ${code}`,
-      description: errorText,
+      message: error?.message,
+      // description: error?.message,
     });
-  } else if (!response) {
+  } else if (!error) {
     notification.error({
       description: '您的网络发生异常，无法连接服务器',
       message: '网络异常',
     });
   }
-  return response;
+  return error;
 };
 
 /**
@@ -114,31 +120,31 @@ const request = extend({
   // suffix: ".json", // 后缀，统一设置 url 后缀
   timeout: 20000,
   // 'useCache' 是否使用缓存，当值为 true 时，GET 请求在 ttl 毫秒内将被缓存，缓存策略唯一 key 为 url + params 组合
-  // useCache: false, // default
+  // useCache: true, // default
   headers: {
+    //requestType: 'form' 注意不要设置headers，umi-request会自己转换
     // 请求头
-    'Content-Type': 'application/json',
-    'Access-Control-Allow-Origin': '*',
+    // 'Content-Type': 'application/json',
+    // 'Access-Control-Allow-Origin': '*',
+    // 'Access-Control-Allow-Credentials': true
     // Authorization: getToken() ? `Bearer ${getToken()}` : null, // 携带token
+    // Cookie: 'JSESSIONID=645B2157FF0AB5597E114D5C53474EE8'
   },
-  params: {
-    // 即将于请求一起发送的 URL 参数，参数会自动 encode 后添加到 URL 中
-    token: 'xxx', // 所有请求默认带上 token 参数
-  },
+  // params: {
+  //   // 即将于请求一起发送的 URL 参数，参数会自动 encode 后添加到 URL 中
+  //   token: 'xxx', // 所有请求默认带上 token 参数
+  // },
   errorHandler, // 默认错误处理
-  // credentials: 'include', // 默认请求是否带上cookie
+  mode: 'cors',
+  credentials: 'include', // 默认请求是否带上cookie
 });
 
 // request拦截器, 改变url 或 options.
 request.interceptors.request.use((url, options) => {
-  console.log('----url', url);
+  console.log('----url', url, options.requestType);
   url = baseurl + url;
   const token = localStorage.getItem('token'); //获取存储在本地的token
   const { headers = {} } = options || {};
-  const tokenHeaders = {
-    'mxc-token': token,
-    ...headers,
-  };
 
   if (options.method?.toUpperCase() === 'GET') {
     options.params = options.data;
@@ -154,16 +160,32 @@ request.interceptors.request.use((url, options) => {
       options: { ...options, headers },
     };
   }
+
   return {
     url,
-    options: { ...options },
+    options: {
+      ...options,
+      // headers: {
+      //   ...headers,
+      //   Cookie: 'JSESSIONID=4B0B92A58BDB0AEB0CC89A79A4B6E515'
+      //   // 'Access-Control-Allow-Origin': '*',
+      //   // 'Content-Type': options.responseType == 'form' ? 'application/x-www-form-urlencoded;charset=UTF-8' : 'application/json'
+      // }
+    },
   };
 });
 
 // 添加拦截统一处理返回response
-request.interceptors.response.use(async (response) => {
+request.interceptors.response.use(async (response, options) => {
+  console.log(
+    '---response',
+    response,
+    options,
+    response.headers.get('Set-Cookie'),
+  );
   const data = await response.clone().json();
   if (data.code == 0) {
+    // code只有0和1，代表成功和失败，subCode表示了具体的错误原因
     data.success = true;
     return data; //我们的项目是通过code来判断是否请求成功，具体情况看个人项目
   }

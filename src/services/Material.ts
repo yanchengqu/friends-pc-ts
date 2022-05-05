@@ -244,3 +244,19 @@ export async function queryGetAttributes(params: getAttributesParams) {
     data: params,
   });
 }
+
+// 设备统计
+export async function queryDeviceCount(params: any) {
+  return request('device/count ', {
+    method: 'GET',
+    data: params,
+  });
+}
+
+// 物资管理统计
+export async function queryStoreCount(params: any) {
+  return request('store/count', {
+    method: 'GET',
+    data: params,
+  });
+}

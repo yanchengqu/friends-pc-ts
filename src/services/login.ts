@@ -1,7 +1,7 @@
 import request from '@/utils/request';
 
 export interface LoginParamsType {
-  userName: string;
+  username: string;
   password: string;
 }
 export interface UserInfoParamsType {
@@ -9,9 +9,10 @@ export interface UserInfoParamsType {
 }
 
 export async function queryLogin(params: LoginParamsType) {
-  return request('/api/login', {
+  return request('login', {
     method: 'POST',
     data: params,
+    requestType: 'form',
   });
 }
 

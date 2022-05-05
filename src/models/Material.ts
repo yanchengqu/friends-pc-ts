@@ -14,11 +14,17 @@ import {
   queryDeviceGetManufacturers,
   queryGetAttributes,
   queryStoreAttributes,
+  queryDeviceCount,
+  queryStoreCount,
 } from '@/services/Material';
 
 interface Ilist {
   key: string;
   value: string;
+}
+
+interface objData {
+  [key: string]: number | string;
 }
 export interface MaterialState {
   deviceByPageList: any[];
@@ -29,6 +35,8 @@ export interface MaterialState {
   manufacturersList: Ilist[];
   attributesList: Ilist[];
   attributesMaterialList: Ilist[];
+  deviceCountList: objData;
+  storeCountList: objData;
 }
 
 export interface MaterialType {
@@ -46,6 +54,8 @@ export interface MaterialType {
     queryDeviceGetManufacturers: Effect;
     queryGetAttributes: Effect;
     queryStoreAttributes: Effect;
+    queryDeviceCount: Effect;
+    queryStoreCount: Effect;
   };
   reducers: {
     save: Reducer<MaterialState>;
@@ -200,6 +210,32 @@ const MaterialModel: MaterialType = {
           type: 'save',
           payload: {
             attributesMaterialList: response.data,
+          },
+        });
+      }
+    },
+    // 设备统计异常
+    *queryDeviceCount({ payload }, { call, put, select }) {
+      const response = yield call(queryDeviceCount, { ...payload });
+      console.log('--设备统计异常', response);
+      if (response?.success) {
+        yield put({
+          type: 'save',
+          payload: {
+            deviceCountList: response.data,
+          },
+        });
+      }
+    },
+    // 物资统计异常
+    *queryStoreCount({ payload }, { call, put, select }) {
+      const response = yield call(queryStoreCount, { ...payload });
+      console.log('--物资统计异常', response);
+      if (response?.success) {
+        yield put({
+          type: 'save',
+          payload: {
+            storeCountList: response.data,
           },
         });
       }

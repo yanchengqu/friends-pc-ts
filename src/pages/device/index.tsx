@@ -11,7 +11,7 @@ import {
   Table,
 } from 'antd';
 import { MoreArrow } from '@/components';
-
+import device_icon1 from '../../assets/device/device_icon1.png';
 export default function IndexPage() {
   const gridStyle = {
     width: '50%',
@@ -90,6 +90,8 @@ export default function IndexPage() {
       <Row gutter={[12, 12]}>
         <Col span={8}>
           <Card title="库存状态" bordered={false}>
+            {/* 图标 */}
+            <img src={device_icon1} className={styles.imgIcon} />
             <Row>
               <Col span={16} align="center">
                 <Progress
@@ -139,6 +141,8 @@ export default function IndexPage() {
         </Col>
         <Col span={8}>
           <Card title="库存信息" bordered={false}>
+            {/* 图标 */}
+            <img src={device_icon1} className={styles.imgIcon} />
             <Table
               dataSource={dataSource}
               columns={columns}

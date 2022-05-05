@@ -9,9 +9,9 @@ export default function (props: any) {
   const isLogin = window.localStorage.getItem('userid');
   const { pathname } = props.location;
 
-  // if (pathname === '/login') {
-  //   return <SimpleLayout>{props.children}</SimpleLayout>;
-  // }
+  if (pathname === '/login') {
+    return <SimpleLayout>{props.children}</SimpleLayout>;
+  }
 
   // if (!isLogin && pathname !== '/login') {
   //   return <Redirect to={`/login?timestamp=${new Date().getTime()}`} />;

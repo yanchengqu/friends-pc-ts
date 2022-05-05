@@ -43,7 +43,8 @@ const mapStateToProps = ({ Material, loading }: IDvaProps & IProps) => {
 };
 const MaterialPage = ({ dispatch, Material, loading }) => {
   console.log('--Material:', Material, loading);
-  useEffect(() => {
+  const initRequest = () => {
+    // 设备管理数据
     dispatch({
       type: 'Material/deviceByPage',
       payload: {
@@ -51,6 +52,15 @@ const MaterialPage = ({ dispatch, Material, loading }) => {
         pageNum: 1,
       },
     });
+    // 设备统计异常数据
+    dispatch({
+      type: 'Material/queryDeviceCount',
+      payload: {},
+    });
+  };
+
+  useEffect(() => {
+    initRequest();
   }, []);
   // 控制设备弹窗
   const [visible, setVisible] = useState(false);
@@ -154,19 +164,19 @@ const MaterialPage = ({ dispatch, Material, loading }) => {
   // 面板点击
   const tabClick = (activeKey) => {
     activeKey == 1
-      ? dispatch({
-          type: 'Material/deviceByPage',
-          payload: {
-            pageSize: 10,
-            pageNum: 1,
-          },
-        })
-      : dispatch({
+      ? initRequest()
+      : // 物质列表table
+        dispatch({
           type: 'Material/queryStoreByPage',
           payload: {
             pageSize: 10,
             pageNum: 1,
           },
+        }) &&
+        // 物资异常信息
+        dispatch({
+          type: 'Material/queryStoreCount',
+          payload: {},
         });
   };
   return (
@@ -304,7 +314,7 @@ const MaterialPage = ({ dispatch, Material, loading }) => {
                       borderRadius: '4px 0px 0px 4px',
                     }}
                   >
-                    <Statistic title="4" value="库房" />
+                    <Statistic title="4" value="库存商品类型" />
                   </Card>
                   <Card
                     bordered={false}
