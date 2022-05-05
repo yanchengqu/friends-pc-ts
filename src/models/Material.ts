@@ -27,8 +27,8 @@ interface objData {
   [key: string]: number | string;
 }
 export interface MaterialState {
-  deviceByPageList: any[];
-  materialByPageList: any[];
+  deviceByPageList: object;
+  materialByPageList: object;
   warehouseTreeList: any[];
   deviceTypes: Ilist[];
   materialTypes: Ilist[];
